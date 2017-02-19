@@ -21,6 +21,11 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
+    <string name="pref_location_key">settings_location</string>
+    <string name="pref_temperature_units_key">settings_temp_units</string>
+    <string name="pref_location_default">Ho Chi Minh</string>
+    <string name="pref_temperature_units_default">metric</string>
+
 
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
@@ -32,8 +37,8 @@
         <item>Imperial</item>
     </string-array>
     <string-array name="pref_general_temp_unit_values">
-        <item>0</item>
-        <item>1</item>
+        <item>metric</item>
+        <item>imperial</item>
     </string-array>
 
     <string name="pref_title_social_recommendations">Enable social recommendations</string>

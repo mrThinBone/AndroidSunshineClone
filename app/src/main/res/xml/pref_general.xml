@@ -31,21 +31,21 @@
         android:title="@string/pref_title_add_friends_to_messages" />
 
     <EditTextPreference
-        android:key="settings_location"
+        android:key="@string/pref_location_key"
         android:title="@string/pref_title_general_location"
         android:summary=""
         android:dialogTitle="@string/pref_title_general_location"
-        android:defaultValue="Ho Chi Minh"
+        android:defaultValue="@string/pref_location_default"
         android:inputType="text"
         android:singleLine="true"/>
 
     <ListPreference
-        android:key="settings_temperature_unit"
+        android:key="@string/pref_temperature_units_key"
         android:title="@string/pref_title_general_temp_unit"
         android:summary=""
         android:dialogTitle="@string/pref_title_general_temp_unit"
         android:entries="@array/pref_general_temp_unit_texts"
         android:entryValues="@array/pref_general_temp_unit_values"
-        android:defaultValue="0"/>
+        android:defaultValue="@string/pref_temperature_units_default"/>
 
 </PreferenceScreen>
