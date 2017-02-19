@@ -25,6 +25,17 @@
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
 
+    <string name="pref_title_general_location">Location</string>
+    <string name="pref_title_general_temp_unit">Pick your units</string>
+    <string-array name="pref_general_temp_unit_texts">
+        <item>Metric</item>
+        <item>Imperial</item>
+    </string-array>
+    <string-array name="pref_general_temp_unit_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
     <string name="pref_title_social_recommendations">Enable social recommendations</string>
     <string name="pref_description_social_recommendations">Recommendations for people to contact
         based on your message history
