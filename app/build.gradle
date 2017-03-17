@@ -13,6 +13,7 @@ android {
         jackOptions {
             enabled true
         }
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
@@ -21,7 +22,7 @@ android {
         }
     }
     buildTypes.each {
-        it.buildConfigField 'String', 'OPEN_WEATHER_MAP_API_KEY', "\"yourapikeyhere\""
+        it.buildConfigField 'String', 'OPEN_WEATHER_MAP_API_KEY', "\"yourapikey\""
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -32,4 +33,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:25.1.1'
+    compile 'com.android.support:design:25.1.1'
+    compile 'com.android.support:support-v4:25.1.1'
+    compile 'com.android.support:support-vector-drawable:25.1.1'
 }
