@@ -5,7 +5,7 @@ import android.net.Uri;
 import android.test.AndroidTestCase;
 
 public class TestUriMatcher extends AndroidTestCase {
-    private static final String LOCATION_QUERY = "London, UK";
+    private static final String LOCATION_QUERY = "London";
     private static final long TEST_DATE = 1419033600L;  // December 20th, 2014
     private static final long TEST_LOCATION_ID = 10L;
 

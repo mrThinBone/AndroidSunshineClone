@@ -1,17 +1,15 @@
 package com.example.android.sunshine.app.data;
 
 import android.net.Uri;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import android.test.AndroidTestCase;
 
 /**
  * Created by DELL-INSPIRON on 3/18/2017.
  */
 
-public class TestWeatherContract {
+public class TestWeatherContract extends AndroidTestCase {
     // intentionally includes a slash to make sure Uri is getting quoted correctly
-    private static final String TEST_WEATHER_LOCATION = "/North Pole";
+    private static final String TEST_WEATHER_LOCATION = "HoChiMinh";
     private static final long TEST_WEATHER_DATE = 1419033600L;  // December 20th, 2014
 
     /*
@@ -25,7 +23,7 @@ public class TestWeatherContract {
         assertEquals("Error: Weather location not properly appended to the end of the Uri",
                 TEST_WEATHER_LOCATION, locationUri.getLastPathSegment());
         assertEquals("Error: Weather location Uri doesn't match our expected result",
-                locationUri.toString(),
-                "content://com.example.android.sunshine.app/weather/%2FNorth%20Pole");
+                "content://com.example.android.sunshine.app/weather/HoChiMinh",
+                locationUri.toString());
     }
 }
