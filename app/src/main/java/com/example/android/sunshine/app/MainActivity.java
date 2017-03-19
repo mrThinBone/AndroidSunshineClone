@@ -27,15 +27,37 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String FORECASTFRAGMENT_TAG = "forecastFragment";
+    private String mLocation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ForecastFragment())
+                    .add(R.id.container, new ForecastFragment(), FORECASTFRAGMENT_TAG)
                     .commit();
         }
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        mLocation = pref.getString(getString(R.string.pref_location_key),
+                getString(R.string.pref_location_default));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String location = pref.getString(getString(R.string.pref_location_key),
+                getString(R.string.pref_location_default));
+        if(!location.equals(mLocation))
+            onLocationChanged(location);
+    }
+
+    void onLocationChanged(String newLocation) {
+        ForecastFragment forecastFragment = (ForecastFragment) getSupportFragmentManager().findFragmentByTag(FORECASTFRAGMENT_TAG);
+        forecastFragment.updateWeather();
+        mLocation = newLocation;
     }
 
     @Override
@@ -67,12 +89,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void openPreferredLocationInMap() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String location = pref.getString(getString(R.string.pref_location_key),
-                getString(R.string.pref_location_default));
-
         Uri geoLocation = Uri.parse("geo:0,0?").buildUpon()
-                .appendQueryParameter("q", location)
+                .appendQueryParameter("q", mLocation)
                 .build();
 
         Intent intent = new Intent(Intent.ACTION_VIEW);

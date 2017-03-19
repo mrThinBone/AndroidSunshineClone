@@ -117,14 +117,21 @@ public class ForecastFragment extends Fragment {
                         locationSetting, cursor.getLong(COL_WEATHER_DATE)));
                 startActivity(intent);
             }
-//            String forecast = mForecastAdapter.getItem(i);
-//            Intent intent = new Intent(getActivity(), DetailActivity.class);
-//            intent.putExtra(Intent.EXTRA_TEXT, forecast);
-//            startActivity(intent);
         });
         listView.setAdapter(mForecastAdapter);
 
         return rootView;
+    }
+
+    void updateWeather() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        String location = pref.getString(getString(R.string.pref_location_key),
+                getString(R.string.pref_location_default));
+        String unitType = pref.getString(getString(R.string.pref_temperature_units_key),
+                getString(R.string.pref_temperature_units_default));
+
+        FetchWeatherTask weatherTask = new FetchWeatherTask(this.getActivity());
+        weatherTask.execute(location, unitType);
     }
 
     @Override
@@ -143,17 +150,6 @@ public class ForecastFragment extends Fragment {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    void updateWeather() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-        String location = pref.getString(getString(R.string.pref_location_key),
-                getString(R.string.pref_location_default));
-        String unitType = pref.getString(getString(R.string.pref_temperature_units_key),
-                getString(R.string.pref_temperature_units_default));
-
-        FetchWeatherTask weatherTask = new FetchWeatherTask(this.getActivity());
-        weatherTask.execute(location, unitType);
     }
 
     private void createLoader() {
