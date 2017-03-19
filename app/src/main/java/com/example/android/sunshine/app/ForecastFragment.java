@@ -17,6 +17,8 @@ package com.example.android.sunshine.app;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -30,6 +32,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.example.android.sunshine.app.data.WeatherContract;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +43,7 @@ import java.util.List;
  */
 public class ForecastFragment extends Fragment {
 
-    private ArrayAdapter<String> mForecastAdapter;
+    private ForecastAdapter mForecastAdapter;
 
     public ForecastFragment() {
     }
@@ -73,41 +77,33 @@ public class ForecastFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // Create some dummy data for the ListView.  Here's a sample weekly forecast
-        String[] data = {
-                "Mon 6/23 - Sunny - 31/17",
-                "Tue 6/24 - Foggy - 21/8",
-                "Wed 6/25 - Cloudy - 22/17",
-                "Thurs 6/26 - Rainy - 18/11",
-                "Fri 6/27 - Foggy - 21/10",
-                "Sat 6/28 - TRAPPED IN WEATHERSTATION - 23/18",
-                "Sun 6/29 - Sunny - 20/7"
-        };
-        List<String> weekForecast = new ArrayList<>(Arrays.asList(data));
-
-        // Now that we have some dummy forecast data, create an ArrayAdapter.
-        // The ArrayAdapter will take data from a source (like our dummy forecast) and
-        // use it to populate the ListView it's attached to.
-        mForecastAdapter =
-                new ArrayAdapter<>(
-                        getActivity(), // The current context (this activity)
-                        R.layout.list_item_forecast, // The name of the layout ID.
-                        R.id.list_item_forecast_textview, // The ID of the textview to populate.
-                        weekForecast);
+        mForecastAdapter = new ForecastAdapter(getActivity(), getWeatherData(), 0);
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         // Get a reference to the ListView, and attach this adapter to it.
         ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
         listView.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
-            String forecast = mForecastAdapter.getItem(i);
-            Intent intent = new Intent(getActivity(), DetailActivity.class);
-            intent.putExtra(Intent.EXTRA_TEXT, forecast);
-            startActivity(intent);
+//            String forecast = mForecastAdapter.getItem(i);
+//            Intent intent = new Intent(getActivity(), DetailActivity.class);
+//            intent.putExtra(Intent.EXTRA_TEXT, forecast);
+//            startActivity(intent);
         });
         listView.setAdapter(mForecastAdapter);
 
         return rootView;
+    }
+
+    private Cursor getWeatherData() {
+        String locationSetting = Utility.getPreferredLocation(getActivity());
+
+        // Sort order: ascending, by date
+        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
+        Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(locationSetting, System.currentTimeMillis());
+        return getActivity().getApplicationContext().getContentResolver().query(
+                weatherForLocationUri,
+                null, null, null,
+                sortOrder);
     }
 
     void updateWeather() {
@@ -117,11 +113,7 @@ public class ForecastFragment extends Fragment {
         String unitType = pref.getString(getString(R.string.pref_temperature_units_key),
                 getString(R.string.pref_temperature_units_default));
 
-        FetchWeatherTask weatherTask = new FetchWeatherTask(this.getActivity(), mForecastAdapter);
+        FetchWeatherTask weatherTask = new FetchWeatherTask(this.getActivity());
         weatherTask.execute(location, unitType);
     }
-    /*mForecastAdapter.clear();
-                for (String dayForecastStr : result) {
-        mForecastAdapter.add(dayForecastStr);
-    }*/
 }
