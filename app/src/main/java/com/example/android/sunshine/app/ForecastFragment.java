@@ -109,6 +109,14 @@ public class ForecastFragment extends Fragment {
         // Get a reference to the ListView, and attach this adapter to it.
         ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
         listView.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
+            Cursor cursor = (Cursor) adapterView.getItemAtPosition(i);
+            if(cursor!=null) {
+                String locationSetting = Utility.getPreferredLocation(getActivity());
+                Intent intent = new Intent(getActivity(), DetailActivity.class);
+                intent.setData(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
+                        locationSetting, cursor.getLong(COL_WEATHER_DATE)));
+                startActivity(intent);
+            }
 //            String forecast = mForecastAdapter.getItem(i);
 //            Intent intent = new Intent(getActivity(), DetailActivity.class);
 //            intent.putExtra(Intent.EXTRA_TEXT, forecast);
