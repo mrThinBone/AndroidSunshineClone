@@ -6,8 +6,7 @@ import android.test.AndroidTestCase;
 import com.example.android.sunshine.app.data.WeatherContract;
 
 public class TestFetchWeatherTask extends AndroidTestCase {
-    static final String ADD_LOCATION_SETTING = "Sunnydale, CA";
-    static final String ADD_LOCATION_CITY = "HoChiMinh";
+    static final String ADD_LOCATION_CITY = "Ho Chi Minh";
     static final double ADD_LOCATION_LAT = 10.840475;
     static final double ADD_LOCATION_LON = 106.414162;
 
@@ -44,21 +43,19 @@ public class TestFetchWeatherTask extends AndroidTestCase {
                             WeatherContract.LocationEntry.COLUMN_COORD_LONG
                     },
                     WeatherContract.LocationEntry.COLUMN_CITY_NAME + " = ?",
-                    new String[]{ADD_LOCATION_SETTING},
+                    new String[]{ADD_LOCATION_CITY},
                     null);
 
             // these match the indices of the projection
             if (locationCursor.moveToFirst()) {
                 assertEquals("Error: the queried value of locationId does not match the returned value" +
                         "from addLocation", locationCursor.getLong(0), locationId);
-                assertEquals("Error: the queried value of location setting is incorrect",
-                        locationCursor.getString(1), ADD_LOCATION_SETTING);
                 assertEquals("Error: the queried value of location city is incorrect",
-                        locationCursor.getString(2), ADD_LOCATION_CITY);
+                        locationCursor.getString(1), ADD_LOCATION_CITY);
                 assertEquals("Error: the queried value of latitude is incorrect",
-                        locationCursor.getDouble(3), ADD_LOCATION_LAT);
+                        locationCursor.getDouble(2), ADD_LOCATION_LAT);
                 assertEquals("Error: the queried value of longitude is incorrect",
-                        locationCursor.getDouble(4), ADD_LOCATION_LON);
+                        locationCursor.getDouble(3), ADD_LOCATION_LON);
             } else {
                 fail("Error: the id you used to query returned an empty cursor");
             }
@@ -77,7 +74,7 @@ public class TestFetchWeatherTask extends AndroidTestCase {
         // reset our state back to normal
         getContext().getContentResolver().delete(WeatherContract.LocationEntry.CONTENT_URI,
                 WeatherContract.LocationEntry.COLUMN_CITY_NAME + " = ?",
-                new String[]{ADD_LOCATION_SETTING});
+                new String[]{ADD_LOCATION_CITY});
 
         // clean up the test so that other tests can use the content provider
         getContext().getContentResolver().
