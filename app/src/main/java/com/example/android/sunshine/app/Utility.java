@@ -14,6 +14,23 @@ public class Utility {
     // Format used for storing dates in the database.  ALso used for converting those strings
     // back into date objects for comparison/processing.
     public static final String DATE_FORMAT = "yyyyMMdd";
+    static final String[] directionsText = { "N", "NE", "E", "SE", "S", "SW", "W", "NW" };
+    static final int DEGREES_TOTAL = 360;
+    static final int DIR_TOTAL = 8;
+
+    public static String getFormattedWind(Context context, float windSpeed, float degrees) {
+        int windFormat;
+        if (Utility.isMetric(context)) {
+            windFormat = R.string.format_wind_kmh;
+        } else {
+            windFormat = R.string.format_wind_mph;
+            windSpeed = .621371192237334f * windSpeed;
+        }
+
+        // From wind direction in degrees, determine compass direction as a string (e.g NW)
+        String direction = directionsText[Math.round(degrees / (DEGREES_TOTAL / DIR_TOTAL)) % DIR_TOTAL];
+        return String.format(context.getString(windFormat), windSpeed, direction);
+    }
 
     /**
      * Helper method to convert the database representation of the date into something to display
