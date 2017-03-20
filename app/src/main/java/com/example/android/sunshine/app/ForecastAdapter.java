@@ -55,8 +55,8 @@ public class ForecastAdapter extends CursorAdapter {
         viewHolder.iconView.setImageResource(R.drawable.ic_launcher);
         viewHolder.tvDate.setText(Utility.getFriendlyDayString(context, cursor.getLong(ForecastFragment.COL_WEATHER_DATE)));
         viewHolder.tvForecast.setText(cursor.getString(ForecastFragment.COL_WEATHER_DESC));
-        viewHolder.tvHighTemp.setText(Utility.formatTemperature(cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP), isMetric));
-        viewHolder.tvLowTemp.setText(Utility.formatTemperature(cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP), isMetric));
+        viewHolder.tvHighTemp.setText(Utility.formatTemperature(context, cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP), isMetric));
+        viewHolder.tvLowTemp.setText(Utility.formatTemperature(context, cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP), isMetric));
     }
 
     static class ViewHolder {
