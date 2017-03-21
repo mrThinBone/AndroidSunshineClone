@@ -49,24 +49,29 @@ public class ForecastAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
+        int viewType = getItemViewType(cursor.getPosition());
         // our view is pretty simple here --- just a text view
         // we'll keep the UI functional with a simple (and slow!) binding.
         boolean isMetric = Utility.isMetric(context);
-        viewHolder.iconView.setImageResource(R.drawable.ic_launcher);
+        int condition = cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID);
+        viewHolder.iconView.setImageResource(
+                viewType==VIEW_TYPE_TODAY? Utility.getArtResourceForWeatherCondition(condition):
+                        Utility.getIconResourceForWeatherCondition(condition)
+        );
         viewHolder.tvDate.setText(Utility.getFriendlyDayString(context, cursor.getLong(ForecastFragment.COL_WEATHER_DATE)));
         viewHolder.tvForecast.setText(cursor.getString(ForecastFragment.COL_WEATHER_DESC));
         viewHolder.tvHighTemp.setText(Utility.formatTemperature(context, cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP), isMetric));
         viewHolder.tvLowTemp.setText(Utility.formatTemperature(context, cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP), isMetric));
     }
 
-    static class ViewHolder {
-        public final ImageView iconView;
-        public final TextView tvDate;
-        public final TextView tvForecast;
-        public final TextView tvHighTemp;
-        public final TextView tvLowTemp;
+    private static class ViewHolder {
+        final ImageView iconView;
+        final TextView tvDate;
+        final TextView tvForecast;
+        final TextView tvHighTemp;
+        final TextView tvLowTemp;
 
-        public ViewHolder(View root) {
+        ViewHolder(View root) {
             iconView = (ImageView) root.findViewById(R.id.list_item_icon);
             tvDate = (TextView) root.findViewById(R.id.list_item_date_textview);
             tvForecast = (TextView) root.findViewById(R.id.list_item_forecast_textview);
