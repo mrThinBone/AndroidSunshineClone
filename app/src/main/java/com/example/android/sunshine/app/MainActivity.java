@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements ForecastDateChang
             }
         } else {
             mTwoPane = false;
+            getSupportActionBar().setElevation(0f);
         }
     }
 
