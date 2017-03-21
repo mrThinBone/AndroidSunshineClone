@@ -29,19 +29,27 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String FORECASTFRAGMENT_TAG = "forecastFragment";
     private String mLocation;
+    private boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ForecastFragment(), FORECASTFRAGMENT_TAG)
-                    .commit();
-        }
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         mLocation = pref.getString(getString(R.string.pref_location_key),
                 getString(R.string.pref_location_default));
+
+        if(findViewById(R.id.weather_detail_container) != null) {
+            mTwoPane = true;
+
+            if(savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.weather_detail_container, new DetailFragment())
+                        .commit();
+            }
+        } else {
+            mTwoPane = false;
+        }
     }
 
     @Override
@@ -57,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     void onLocationChanged(String newLocation) {
         ForecastFragment forecastFragment = (ForecastFragment) getSupportFragmentManager().findFragmentByTag(FORECASTFRAGMENT_TAG);
         forecastFragment.updateWeather();
+
         mLocation = newLocation;
     }
 
