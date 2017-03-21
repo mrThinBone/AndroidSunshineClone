@@ -15,7 +15,6 @@
  */
 package com.example.android.sunshine.app;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -33,21 +32,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.android.sunshine.app.data.WeatherContract;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Encapsulates fetching the forecast and displaying it as a {@link ListView} layout.
  */
 public class ForecastFragment extends Fragment {
 
-    private ForecastAdapter mForecastAdapter;
     static final int LOADER_ID = 110;
     // For the forecast view we're showing only a small subset of the stored data.
 // Specify the columns we need.
@@ -81,7 +74,9 @@ public class ForecastFragment extends Fragment {
     static final int COL_COORD_LAT = 7;
     static final int COL_COORD_LONG = 8;
 
-    private boolean firstStart = true;
+    private ForecastAdapter mForecastAdapter;
+    private ListView mListView;
+    private int lastSelectedPosition = ListView.INVALID_POSITION;
 
     public ForecastFragment() {
     }
@@ -103,14 +98,18 @@ public class ForecastFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        if(savedInstanceState != null)
+        lastSelectedPosition = savedInstanceState.getInt("selectedPos", ListView.INVALID_POSITION);
         mForecastAdapter = new ForecastAdapter(getActivity(), null, 0);
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         // Get a reference to the ListView, and attach this adapter to it.
-        ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
-        listView.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
+        mListView = (ListView) rootView.findViewById(R.id.listview_forecast);
+        mListView.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
+            //
+            lastSelectedPosition = i;
+            //
             Cursor cursor = (Cursor) adapterView.getItemAtPosition(i);
             if(cursor!=null) {
                 ((ForecastDateChangedListener) getActivity()).onSelectedForecastDateChanged(
@@ -118,9 +117,17 @@ public class ForecastFragment extends Fragment {
                 );
             }
         });
-        listView.setAdapter(mForecastAdapter);
+        mListView.setAdapter(mForecastAdapter);
 
         return rootView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if(lastSelectedPosition != ListView.INVALID_POSITION) {
+            outState.putInt("selectedPos", lastSelectedPosition);
+        }
+        super.onSaveInstanceState(outState);
     }
 
     void updateWeather() {
@@ -170,6 +177,8 @@ public class ForecastFragment extends Fragment {
                 // or whenever underlining URI has data changed
                 // in this case is "weatherForLocationUri"
                 mForecastAdapter.swapCursor(data);
+                if(lastSelectedPosition != ListView.INVALID_POSITION)
+                    mListView.smoothScrollToPosition(lastSelectedPosition);
             }
 
             @Override
