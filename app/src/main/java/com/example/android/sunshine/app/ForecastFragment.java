@@ -81,6 +81,8 @@ public class ForecastFragment extends Fragment {
     static final int COL_COORD_LAT = 7;
     static final int COL_COORD_LONG = 8;
 
+    private boolean firstStart = true;
+
     public ForecastFragment() {
     }
 
@@ -111,11 +113,9 @@ public class ForecastFragment extends Fragment {
         listView.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
             Cursor cursor = (Cursor) adapterView.getItemAtPosition(i);
             if(cursor!=null) {
-                String locationSetting = Utility.getPreferredLocation(getActivity());
-                Intent intent = new Intent(getActivity(), DetailActivity.class);
-                intent.setData(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
-                        locationSetting, cursor.getLong(COL_WEATHER_DATE)));
-                startActivity(intent);
+                ((ForecastDateChangedListener) getActivity()).onSelectedForecastDateChanged(
+                        cursor.getLong(COL_WEATHER_DATE)
+                );
             }
         });
         listView.setAdapter(mForecastAdapter);

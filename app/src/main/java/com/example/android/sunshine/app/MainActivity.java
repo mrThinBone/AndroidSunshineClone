@@ -25,9 +25,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+import com.example.android.sunshine.app.data.WeatherContract;
+
+public class MainActivity extends AppCompatActivity implements ForecastDateChangedListener {
 
     private static final String FORECASTFRAGMENT_TAG = "forecastFragment";
+    private static final String DETAIL_FORECASTFRAGMENT_TAG = "detailFragment";
     private String mLocation;
     private boolean mTwoPane;
 
@@ -44,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
             if(savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.weather_detail_container, new DetailFragment())
+                        .replace(R.id.weather_detail_container, new DetailFragment(), DETAIL_FORECASTFRAGMENT_TAG)
                         .commit();
             }
         } else {
@@ -65,8 +68,26 @@ public class MainActivity extends AppCompatActivity {
     void onLocationChanged(String newLocation) {
         ForecastFragment forecastFragment = (ForecastFragment) getSupportFragmentManager().findFragmentByTag(FORECASTFRAGMENT_TAG);
         forecastFragment.updateWeather();
-
+        if(mTwoPane) {
+            DetailFragment detailFragment = (DetailFragment) getSupportFragmentManager().findFragmentByTag(DETAIL_FORECASTFRAGMENT_TAG);
+            detailFragment.onLocationChanged(newLocation);
+        }
         mLocation = newLocation;
+    }
+
+    @Override
+    public void onSelectedForecastDateChanged(long date) {
+        Uri forecastByDate = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(mLocation, date);
+        if(mTwoPane) {
+            DetailFragment detailFragment = DetailFragment.newInstance(forecastByDate);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.weather_detail_container, detailFragment, DETAIL_FORECASTFRAGMENT_TAG)
+                    .commit();
+        } else {
+            Intent intent = new Intent(this, DetailActivity.class);
+            intent.setData(forecastByDate);
+            startActivity(intent);
+        }
     }
 
     @Override

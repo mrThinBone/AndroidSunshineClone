@@ -2,6 +2,7 @@ package com.example.android.sunshine.app;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -62,14 +63,24 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     private ShareActionProvider mShareActionProvider;
     private String mForecast;
+    private Uri mUri;
 
     public DetailFragment() {
         setHasOptionsMenu(true);
     }
 
+    static DetailFragment newInstance(Uri uri) {
+        DetailFragment fragment = new DetailFragment();
+        Bundle args = new Bundle();
+        args.putParcelable("detail_forecast_uri", uri);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mUri = getArguments() == null ? null : getArguments().getParcelable("detail_forecast_uri");
         getLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
@@ -119,10 +130,19 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         return shareIntent;
     }
 
+    void onLocationChanged(String newLocation) {
+        Uri uri = mUri;
+        if(null != uri) {
+            long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
+            Uri updatedUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(newLocation, date);
+            mUri = updatedUri;
+            getLoaderManager().restartLoader(LOADER_ID, null, this);
+        }
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Intent intent = getActivity().getIntent();
-        if (intent == null || intent.getData() == null) {
+        if (mUri == null) {
             return null;
         }
 
@@ -130,7 +150,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         // creating a Cursor for the data being displayed.
         return new CursorLoader(
                 getActivity(),
-                intent.getData(),
+                mUri,
                 FORECAST_COLUMNS,
                 null,
                 null,
