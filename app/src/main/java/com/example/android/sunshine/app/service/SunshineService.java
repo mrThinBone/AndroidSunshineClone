@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.Vector;
 
 /**
@@ -270,10 +271,12 @@ public class SunshineService extends IntentService {
             // add to database
             if ( cVVector.size() > 0 ) {
                 // Student: call bulkInsert to add the weatherEntries to the database here
-                getApplicationContext().getContentResolver().bulkInsert(
+                ContentResolver cr = getApplicationContext().getContentResolver();
+                cr.bulkInsert(
                         WeatherContract.WeatherEntry.CONTENT_URI,
                         cVVector.toArray(new ContentValues[cVVector.size()])
                 );
+                deleteOldWeatherData(cr);
             }
 
 
@@ -320,5 +323,14 @@ public class SunshineService extends IntentService {
         }
         cursor.close();
         return locationID;
+    }
+
+    private void deleteOldWeatherData(ContentResolver cr) {
+        Calendar date = Calendar.getInstance();
+        date.set(Calendar.DAY_OF_YEAR, date.get(Calendar.DAY_OF_YEAR) - 1);
+
+        cr.delete(WeatherContract.WeatherEntry.CONTENT_URI,
+                WeatherContract.WeatherEntry.COLUMN_DATE + " <= ?",
+                new String[]{Long.toString(date.getTimeInMillis())});
     }
 }

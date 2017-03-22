@@ -146,8 +146,8 @@ public class ForecastFragment extends Fragment {
                 getString(R.string.pref_temperature_units_default));
 
         Intent intent = new Intent(getActivity(), SunshineService.AlarmReceiver.class);
-        intent.putExtra(LOCATION_QUERY_EXTRA, LOCATION_QUERY_EXTRA);
-        intent.putExtra(UNIT_QUERY_EXTRA, UNIT_QUERY_EXTRA);
+        intent.putExtra(location, LOCATION_QUERY_EXTRA);
+        intent.putExtra(unitType, UNIT_QUERY_EXTRA);
         fireAlarm(intent);
     }
 
