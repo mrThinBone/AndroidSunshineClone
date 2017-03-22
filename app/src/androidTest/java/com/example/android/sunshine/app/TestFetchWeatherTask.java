@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.test.AndroidTestCase;
 
 import com.example.android.sunshine.app.data.WeatherContract;
+import com.example.android.sunshine.app.service.FetchWeatherTask;
 
 public class TestFetchWeatherTask extends AndroidTestCase {
     static final String ADD_LOCATION_CITY = "Ho Chi Minh";

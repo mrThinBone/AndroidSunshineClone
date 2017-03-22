@@ -15,6 +15,10 @@
  */
 package com.example.android.sunshine.app;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -35,6 +39,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.android.sunshine.app.data.WeatherContract;
+import com.example.android.sunshine.app.service.SunshineService;
+
+import static com.example.android.sunshine.app.service.SunshineService.LOCATION_QUERY_EXTRA;
+import static com.example.android.sunshine.app.service.SunshineService.UNIT_QUERY_EXTRA;
 
 /**
  * Encapsulates fetching the forecast and displaying it as a {@link ListView} layout.
@@ -137,8 +145,16 @@ public class ForecastFragment extends Fragment {
         String unitType = pref.getString(getString(R.string.pref_temperature_units_key),
                 getString(R.string.pref_temperature_units_default));
 
-        FetchWeatherTask weatherTask = new FetchWeatherTask(this.getActivity());
-        weatherTask.execute(location, unitType);
+        Intent intent = new Intent(getActivity(), SunshineService.AlarmReceiver.class);
+        intent.putExtra(LOCATION_QUERY_EXTRA, LOCATION_QUERY_EXTRA);
+        intent.putExtra(UNIT_QUERY_EXTRA, UNIT_QUERY_EXTRA);
+        fireAlarm(intent);
+    }
+
+    private void fireAlarm(Intent alarmIntent) {
+        PendingIntent pi = PendingIntent.getBroadcast(getActivity(), 0, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+5000, pi);
     }
 
     @Override
